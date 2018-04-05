@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
 
+//Forward Declarations
+class UProjectileMovementComponent;
+
 UCLASS()
 class BATTLETANK_REDONE_API AProjectile : public AActor
 {
@@ -22,6 +25,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void LaunchProjectile(float LaunchSpeed);
+
+private:
+	UProjectileMovementComponent* ProjectileMovement;
 
 	
 	

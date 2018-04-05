@@ -10,6 +10,7 @@
 class UTankAimingComponent;
 class UTankBarrel;
 class UTankTurret;
+class AProjectile;
 
 UCLASS()
 class BATTLETANK_REDONE_API ATank : public APawn
@@ -48,7 +49,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Firing)
 		float LaunchSpeed = 100000; //TODO find a sensible default value
 
-	
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+		TSubclassOf<AProjectile> ProjectileBlueprint;
+
+	UTankBarrel* Barrel = nullptr;
+
+	float ReloadTimeInSeconds = 3.0f;
+
+	double LastFireTime = 0;
 
 	
 	
