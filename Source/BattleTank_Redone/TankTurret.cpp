@@ -7,8 +7,7 @@ void UTankTurret::InitiateRotate(float DeltaRotatorYaw)
 {
 	auto RotationChange = FMath::Clamp(DeltaRotatorYaw, -1.0f, 1.0f) * MaxDegreesPerSecond * GetWorld()->DeltaTimeSeconds;
 	auto NewRotationYaw = RelativeRotation.Yaw + RotationChange;
-
-	SetWorldRotation(FRotator(0.0f, NewRotationYaw, 0.0f));
+	SetRelativeRotation(FRotator(RelativeRotation.Pitch, NewRotationYaw, RelativeRotation.Roll));
 }
 
 
