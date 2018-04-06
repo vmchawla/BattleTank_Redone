@@ -92,14 +92,18 @@ void UTankAimingComponent::MoveBarrelAndTurretTowards(FVector AimDirectionNormal
 	auto AimAsRotator = AimDirectionNormalized.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 
-	/*UE_LOG(LogTemp, Warning, TEXT("Aim Rotator: %s"), *(AimAsRotator.ToString()));
-	UE_LOG(LogTemp, Warning, TEXT("Barrel Rotator: %s"), *(BarrelRotator.ToString()));
-	UE_LOG(LogTemp, Warning, TEXT("Delta Rotator: %s"), *(DeltaRotator.ToString()));*/
+	//UE_LOG(LogTemp, Warning, TEXT("Aim Rotator: %s"), *(AimAsRotator.ToString()));
+	//UE_LOG(LogTemp, Warning, TEXT("Barrel Rotator: %s"), *(BarrelRotator.ToString()));
+	//UE_LOG(LogTemp, Warning, TEXT("Delta Rotator: %s"), *(DeltaRotator.ToString()));
 
 	Barrel->Elevate(DeltaRotator.Pitch);
-	if (FMath::Abs(DeltaRotator.Yaw) < 280.0f)
+	if (FMath::Abs(DeltaRotator.Yaw) < 180.0f)
 	{
 		Turret->InitiateRotate(DeltaRotator.Yaw);
+	}
+	else
+	{
+		Turret->InitiateRotate(-DeltaRotator.Yaw);
 	}
 		
 	

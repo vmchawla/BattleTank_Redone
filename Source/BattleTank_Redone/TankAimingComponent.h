@@ -11,7 +11,7 @@ class UTankBarrel;
 class UTankTurret;
 
 
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_REDONE_API UTankAimingComponent : public UActorComponent
 {
 	GENERATED_BODY()
