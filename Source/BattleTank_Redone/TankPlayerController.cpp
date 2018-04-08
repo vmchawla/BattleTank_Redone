@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankPlayerController.h"
-#include "Tank.h"
 #include "Engine/World.h"
-#include "Public/DrawDebugHelpers.h"
+//#include "Public/DrawDebugHelpers.h"
+#include "TankAimingComponent.h"
 
 
 
@@ -13,15 +13,6 @@ void ATankPlayerController::Tick(float DeltaTime)
 
 	LineTraceAndPassHitLocationToTank();
 
-}
-
-ATank * ATankPlayerController::GetControlledTank() const
-{
-	if (!ensure(GetPawn()))
-	{
-		return nullptr;
-	}
-	return Cast<ATank>(GetPawn());
 }
 
 void ATankPlayerController::LineTraceAndPassHitLocationToTank()
@@ -51,8 +42,10 @@ void ATankPlayerController::LineTraceAndPassHitLocationToTank()
 		{
 			auto HitLocation = HitResult.Location;
 			//UE_LOG(LogTemp, Warning, TEXT("HitLocation from LineTrace: %s"), *(HitLocation.ToString()));
-			GetControlledTank()->AimAt(HitLocation);
-
+			if (GetPawn()->FindComponentByClass<UTankAimingComponent>())
+			{
+				GetPawn()->FindComponentByClass<UTankAimingComponent>()->AimAt(HitLocation);
+			}
 		}
 	}
 

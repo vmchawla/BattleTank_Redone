@@ -6,9 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "TankPlayerController.generated.h"
 
-//Forward Declarations
-class ATank;
-
 /**
  * 
  */
@@ -33,9 +30,6 @@ public:
 	//Called Every frame
 	virtual void Tick(float DeltaTime) override;
 
-protected:
-	UFUNCTION(BlueprintCallable, Category = "Setup")
-		ATank* GetControlledTank() const;
 
 	
 };
