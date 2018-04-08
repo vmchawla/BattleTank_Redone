@@ -15,7 +15,16 @@ void ATankPlayerController::Tick(float DeltaTime)
 
 }
 
-void ATankPlayerController::LineTraceAndPassHitLocationToTank() 
+ATank * ATankPlayerController::GetControlledTank() const
+{
+	if (!ensure(GetPawn()))
+	{
+		return nullptr;
+	}
+	return Cast<ATank>(GetPawn());
+}
+
+void ATankPlayerController::LineTraceAndPassHitLocationToTank()
 {
 	int32 ViewportSizeX, ViewportSizeY;
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
@@ -42,15 +51,8 @@ void ATankPlayerController::LineTraceAndPassHitLocationToTank()
 		{
 			auto HitLocation = HitResult.Location;
 			//UE_LOG(LogTemp, Warning, TEXT("HitLocation from LineTrace: %s"), *(HitLocation.ToString()));
-			if (Cast<ATank>(GetPawn()))
-			{
-				Cast<ATank>(GetPawn())->AimAt(HitLocation);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("TankPlayerController.cpp has failed to GetPawn() and pass hit location to player controlled tank"));
-			}
-			
+			GetControlledTank()->AimAt(HitLocation);
+
 		}
 	}
 

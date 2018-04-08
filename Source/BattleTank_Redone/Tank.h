@@ -8,7 +8,6 @@
 
 //Forward Declarations
 class UTankAimingComponent;
-class UTankMovementComponent;
 class UTankBarrel;
 class UTankTurret;
 class AProjectile;
@@ -22,12 +21,6 @@ public:
 	// Sets default values for this pawn's properties
 	ATank();
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
-		void SetBarrelReference(UTankBarrel* BarrelToSet);
-
-	UFUNCTION(BlueprintCallable, Category = Setup)
-		void SetTurretReference(UTankTurret* TurretToSet);
-
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -37,26 +30,32 @@ public:
 	//Delegate Aiming to TankAimingComponent by passing it HitLocation
 	void AimAt(FVector HitLocation);
 
-	UFUNCTION(BlueprintCallable, Category = Firing)
+	UFUNCTION(BlueprintCallable, Category = "Firing")
 		void Fire();
 
 protected:
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+		void Initialise(UTankAimingComponent* TankAimingComponentToSet, UTankBarrel* BarrelToSet);
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly)
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
-	UPROPERTY(BlueprintReadOnly)
-	UTankMovementComponent* TankMovementComponent = nullptr;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	
+
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 		float LaunchSpeed = 100000; //TODO find a sensible default value
 
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 		TSubclassOf<AProjectile> ProjectileBlueprint;
 
-	UTankBarrel* Barrel = nullptr;
+	
+
+	UTankBarrel* Barrel = nullptr; //TODO Remove Barrel pointer
 
 	float ReloadTimeInSeconds = 3.0f;
 

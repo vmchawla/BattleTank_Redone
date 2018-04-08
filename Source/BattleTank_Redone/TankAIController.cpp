@@ -3,6 +3,7 @@
 #include "TankAIController.h"
 #include "Engine/World.h"
 #include "Tank.h"
+//Depends on movemement component via pathfinding system
 
 void ATankAIController::BeginPlay()
 {
@@ -24,7 +25,7 @@ void ATankAIController::Tick(float DeltaTime)
 
 		ControlledTank->AimAt(PlayerTank->GetActorLocation());
 		
-		//ControlledTank->Fire(); //TODO Uncomment this line
+		ControlledTank->Fire(); //TODO Uncomment this line
 	}
 }
 
