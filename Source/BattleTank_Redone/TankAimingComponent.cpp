@@ -24,6 +24,11 @@ void UTankAimingComponent::Initialise(UTankBarrel * BarrelToSet, UTankTurret * T
 	Turret = TurretToSet;
 }
 
+EFiringStatus UTankAimingComponent::GetFiringState() const
+{
+	return FiringState;
+}
+
 // Called when the game starts
 void UTankAimingComponent::BeginPlay()
 {
@@ -31,7 +36,7 @@ void UTankAimingComponent::BeginPlay()
 
 	// ...
 
-	//UE_LOG(LogTemp, Warning, TEXT("Barrel: %s and Turret: %s"), *(Barrel->GetName()), *(Turret->GetName()))
+	LastFireTime = GetWorld()->GetTimeSeconds();
 	
 }
 
@@ -40,7 +45,57 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	//UE_LOG(LogTemp, Warning, TEXT("Aim Direction Nomralized: %s"), *(AimDirectionNormalized.ToString()));
+
+	bool isReloaded = (GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeInSeconds;
+	bool hasAmmo = Ammo > 0;
+
+	//if (isReloaded)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Reloaded"));
+	//}
+	//else
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("NOT RELOADED"))
+	//}
+	//
+	//if (IsBarrelMoving())
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Barrel is moving"));
+	//}
+	//else
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Barrel is NOT moving"));
+	//}
+
+	if (!isReloaded && hasAmmo)
+	{
+		FiringState = EFiringStatus::Reloading;
+	}
+	 else if (hasAmmo && isReloaded && IsBarrelMoving())
+	{
+		FiringState = EFiringStatus::Aiming;
+	}
+	else if (hasAmmo && isReloaded && !IsBarrelMoving())
+	{
+		FiringState = EFiringStatus::Locked;
+	}
+	else if (!hasAmmo)
+	{
+		FiringState = EFiringStatus::NoAmmo;
+	}
+}
+
+bool UTankAimingComponent::IsBarrelMoving()
+{
+	if (!ensure(Barrel))
+	{
+		return false;
+	}
+
+	auto BarrelForwardVector = Barrel->GetForwardVector();
+	
+	return !BarrelForwardVector.Equals(AimDirectionNormalized, 0.01f);
 }
 
 void UTankAimingComponent::AimAt(FVector HitLocation)
@@ -66,7 +121,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 
 		if (bHasAimSolution)
 		{
-			auto AimDirectionNormalized = OutLaunchVelocity.GetSafeNormal();
+			AimDirectionNormalized = OutLaunchVelocity.GetSafeNormal();
 			//UE_LOG(LogTemp, Warning, TEXT("Aim Direction Nomralized: %s"), *(AimDirectionNormalized.ToString()));
 			MoveBarrelAndTurretTowards(AimDirectionNormalized);
 
@@ -100,9 +155,9 @@ void UTankAimingComponent::MoveBarrelAndTurretTowards(FVector AimDirectionNormal
 void UTankAimingComponent::Fire()
 {
 	if (!ensure(Barrel && ProjectileBlueprint)) { return;  }
-	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
+	
 
-	if (isReloaded)
+	if (FiringState != EFiringStatus::Reloading && FiringState != EFiringStatus::NoAmmo)
 	{
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBlueprint,
@@ -111,9 +166,12 @@ void UTankAimingComponent::Fire()
 			);
 
 		Projectile->LaunchProjectile(LaunchSpeed);
-		LastFireTime = FPlatformTime::Seconds();
+		LastFireTime = GetWorld()->GetTimeSeconds();
+		Ammo = Ammo - 1;
 	}
 }
+
+
 
 
 

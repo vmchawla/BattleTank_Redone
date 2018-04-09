@@ -21,6 +21,7 @@ void UTankMovementComponent::IntendMove(float Throw)
 	RightTrack->SetThrottle(Throw);
 }
 
+
 void UTankMovementComponent::IntendTurn(float Throw)
 {
 	if (!LeftTrack || !RightTrack)
@@ -28,8 +29,8 @@ void UTankMovementComponent::IntendTurn(float Throw)
 		UE_LOG(LogTemp, Warning, TEXT("LeftTrack or RightTrack not found in TankMovementComponent"));
 		return;
 	}
-	LeftTrack->SetThrottle(-Throw);
-	RightTrack->SetThrottle(Throw);
+	LeftTrack->SetThrottle(-1 * Throw);
+	RightTrack->SetThrottle(1 * Throw);
 }
 
 void UTankMovementComponent::RequestDirectMove(const FVector &MoveVelocity, bool bForceMaxSpeed)
