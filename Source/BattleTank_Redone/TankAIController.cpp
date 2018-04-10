@@ -23,11 +23,16 @@ void ATankAIController::Tick(float DeltaTime)
 		//TODO check radius is in CM
 		MoveToActor(PlayerPawn, AcceptanceRadius);
 		auto AimingComponent = AIControlledPawn->FindComponentByClass<UTankAimingComponent>();
+		if (!(AimingComponent)) 
+		{ 
+			UE_LOG(LogTemp, Warning, TEXT("NO Aiming Component found on AI Controller. Returning"));
+			return;  
+		}
 		AimingComponent->AimAt(PlayerPawn->GetActorLocation());
 
 		if (AimingComponent->GetFiringState() == EFiringStatus::Locked)
 		{
-			//AimingComponent->Fire();
+			AimingComponent->Fire();
 			//TODO Uncomment Fire
 		}
 		

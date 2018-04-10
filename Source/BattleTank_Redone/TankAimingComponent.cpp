@@ -90,12 +90,13 @@ bool UTankAimingComponent::IsBarrelMoving()
 {
 	if (!ensure(Barrel))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("No Barrel found in Aiming Component"));
 		return false;
 	}
 
 	auto BarrelForwardVector = Barrel->GetForwardVector();
 	
-	return !BarrelForwardVector.Equals(AimDirectionNormalized, 0.01f);
+	return !BarrelForwardVector.Equals(AimDirectionNormalized, 0.1f);
 }
 
 void UTankAimingComponent::AimAt(FVector HitLocation)
