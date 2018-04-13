@@ -4,6 +4,7 @@
 #include "Engine/World.h"
 //#include "Public/DrawDebugHelpers.h"
 #include "TankAimingComponent.h"
+#include "Tank.h"
 
 
 
@@ -13,6 +14,29 @@ void ATankPlayerController::Tick(float DeltaTime)
 
 	LineTraceAndPassHitLocationToTank();
 
+}
+
+void ATankPlayerController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	if (InPawn)
+	{
+		auto PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank))
+		{
+			return;
+		}
+		//Subscribe our local method to the tanks death event
+		PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankPlayerController::OnPossessedTankDeath);
+	}
+}
+
+void ATankPlayerController::OnPossessedTankDeath()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Tank Player Controller has heard your broadcast of death"));
+	//StartSpectatingOnly();
+	StartSpectatingOnly();
 }
 
 void ATankPlayerController::LineTraceAndPassHitLocationToTank()
@@ -38,11 +62,11 @@ void ATankPlayerController::LineTraceAndPassHitLocationToTank()
 		auto StartLocation = PlayerCameraManager->GetCameraLocation();
 		//DrawDebugLine(GetWorld(), StartLocation, StartLocation + (LookDirection * LineTraceRange), FColor::Red, false, 0.0f, 0.0f, 10.0f);
 		FHitResult HitResult;
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, StartLocation + (LookDirection * LineTraceRange), ECollisionChannel::ECC_Visibility))
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, StartLocation + (LookDirection * LineTraceRange), ECollisionChannel::ECC_Camera))
 		{
 			auto HitLocation = HitResult.Location;
 			//UE_LOG(LogTemp, Warning, TEXT("HitLocation from LineTrace: %s"), *(HitLocation.ToString()));
-			if (GetPawn()->FindComponentByClass<UTankAimingComponent>())
+			if (GetPawn())
 			{
 				GetPawn()->FindComponentByClass<UTankAimingComponent>()->AimAt(HitLocation);
 			}
@@ -50,6 +74,8 @@ void ATankPlayerController::LineTraceAndPassHitLocationToTank()
 	}
 
 }
+
+
 
 
 

@@ -45,11 +45,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Setup")
 		EFiringStatus FiringState = EFiringStatus::Reloading;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Setup")
-		int Ammo = 3;
-
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 		void Initialise(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Firing")
+		int32 Ammo = 3;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -64,12 +64,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 		TSubclassOf<AProjectile> ProjectileBlueprint;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+		float ReloadTimeInSeconds = 3.0f;
+
 	//Passing Pitch and Yaw Values to Barrel and Turret Respectively
 	void MoveBarrelAndTurretTowards(FVector AimDirectionNormalized);
 
 	double LastFireTime = 0;
-
-	float ReloadTimeInSeconds = 3.0f;
 
 	bool IsBarrelMoving();
 

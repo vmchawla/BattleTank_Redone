@@ -3,11 +3,28 @@
 #include "TankAIController.h"
 #include "Engine/World.h"
 #include "TankAimingComponent.h"
+#include "Tank.h" //So we can implement on death
 //Depends on movemement component via pathfinding system
 
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ATankAIController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	if (InPawn)
+	{
+		auto PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank))
+		{
+			return;
+		}
+		//Subscribe our local method to the tanks death event
+		PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankAIController::OnPossessedTankDeath);
+	}
 }
 
 void ATankAIController::Tick(float DeltaTime)
@@ -16,6 +33,10 @@ void ATankAIController::Tick(float DeltaTime)
 
 	auto PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 	auto AIControlledPawn = GetPawn();
+
+	if (!PlayerPawn) { return; }
+
+	if (!ensure(AIControlledPawn)) { return; }
 
 	if (ensure(PlayerPawn && AIControlledPawn))
 	{
@@ -33,12 +54,16 @@ void ATankAIController::Tick(float DeltaTime)
 		if (AimingComponent->GetFiringState() == EFiringStatus::Locked)
 		{
 			AimingComponent->Fire();
-			//TODO Uncomment Fire
 		}
-		
-
-		
 	}
+}
+
+void ATankAIController::OnPossessedTankDeath()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Tank AI Controller has heard your broadcast od Death"));
+	//PossessedTank->DetachFromControllerPendingDestroy();
+	if (!GetPawn()) { return; }
+	GetPawn()->DetachFromControllerPendingDestroy();
 }
 
 

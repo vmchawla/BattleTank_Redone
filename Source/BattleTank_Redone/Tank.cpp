@@ -16,15 +16,31 @@ void ATank::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	CurrentHealth = StartingHealth;
 }
 
-// Called every frame
-void ATank::Tick(float DeltaTime)
+float ATank::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
-	Super::Tick(DeltaTime);
+	int32 DamagePoints = FPlatformMath::RoundToInt(DamageAmount);
+	int32 DamageToApply = FMath::Clamp(DamagePoints, 0, CurrentHealth);
+	
+	CurrentHealth -= DamageToApply;
 
+	if (CurrentHealth <= 0)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Tank died"));
+		OnDeath.Broadcast();
+	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("Current health: %i and Damage Amount: %f and DamageToApply : %i"), CurrentHealth, DamageAmount, DamageToApply);
+	return DamageToApply;
 }
+
+float ATank::GetHealthPercent() const
+{
+	return (float)CurrentHealth / (float)StartingHealth;
+}
+
 
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

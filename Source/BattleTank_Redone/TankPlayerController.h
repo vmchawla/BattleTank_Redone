@@ -26,9 +26,15 @@ private:
 
 	void LineTraceAndPassHitLocationToTank();
 
+	UFUNCTION()
+		void OnPossessedTankDeath();
+
 public:
 	//Called Every frame
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	void SetPawn(APawn* InPawn) override;
 
 
 	

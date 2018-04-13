@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
+
 /**
  * 
  */
@@ -17,12 +18,17 @@ class BATTLETANK_REDONE_API ATankAIController : public AAIController
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void SetPawn(APawn* InPawn) override;
+
 public:
 	virtual void Tick(float DeltaTime) override;
 	
 private:
-	//How close can the AI get
-	float AcceptanceRadius = 3000.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	float AcceptanceRadius = 5000.0f;
+
+	UFUNCTION()
+		void OnPossessedTankDeath();
 	
 	
 };

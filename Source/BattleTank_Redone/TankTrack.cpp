@@ -53,7 +53,6 @@ void UTankTrack::SetThrottle(float Throttle)
 	//auto Name = GetName();
 	//UE_LOG(LogTemp, Warning, TEXT("%s tracks throttle: %f"), *Name, Throttle);
 
-	//TODO Clamp actual Throttle
 	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1.0f, 1.0f);
 
 }
